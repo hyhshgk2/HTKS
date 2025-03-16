@@ -26,7 +26,7 @@
             background-color: #f9f9f9;
             color: var(--dark-gray);
             line-height: 1.6;
-            padding: 20px;
+            padding: 10px;
         }
         
         h1, h2, h3, h4 {
@@ -36,18 +36,30 @@
         
         .container {
             max-width: 800px;
+            width: 100%;
             margin: 0 auto;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+            padding: 20px;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 1px solid #eee;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+        }
+        
+        .header p {
+            font-size: 16px;
         }
         
         .btn {
@@ -129,8 +141,9 @@
         }
         
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             display: none;
+            flex: 1;
         }
         
         .section.active {
@@ -227,8 +240,8 @@
         
         .footer {
             text-align: center;
-            margin-top: 50px;
-            padding-top: 20px;
+            margin-top: auto;
+            padding-top: 15px;
             border-top: 1px solid #eee;
             color: var(--medium-gray);
             font-size: 14px;
@@ -265,39 +278,52 @@
         
         /* 响应式设计 */
         @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
             .container {
                 padding: 15px;
-                width: 95%;
+                width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            h2 {
+                font-size: 20px;
             }
             .instruction {
-                font-size: 20px;
+                font-size: 18px;
                 padding: 15px;
             }
             .scoring-buttons button {
-                padding: 10px 15px;
+                padding: 12px 15px;
                 font-size: 16px;
             }
             .command-display {
                 font-size: 48px;
-                margin: 30px 0;
+                margin: 25px 0;
+            }
+            .card {
+                padding: 15px;
             }
         }
         
         @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
             .container {
                 padding: 10px;
-                width: 100%;
+            }
+            .header h1 {
+                font-size: 22px;
+            }
+            .header p {
+                font-size: 14px;
             }
             .form-group {
                 max-width: 100%;
             }
             .command-display {
-                font-size: 36px;
+                font-size: 42px;
                 margin: 20px 0;
-                height: 80px;
+                height: 70px;
             }
             .scoring-buttons {
                 flex-direction: column;
@@ -305,6 +331,8 @@
             .scoring-buttons button {
                 margin: 5px 0;
                 width: 100%;
+                padding: 15px;
+                font-size: 18px;
             }
             .navigation {
                 flex-direction: column;
@@ -312,6 +340,38 @@
             .navigation button {
                 width: 100%;
                 margin: 5px 0;
+                padding: 15px;
+                font-size: 18px;
+            }
+            label {
+                font-size: 16px;
+            }
+            input, select {
+                font-size: 16px;
+                padding: 12px;
+                height: 45px;
+            }
+        }
+        
+        /* 横屏适配 */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .command-display {
+                font-size: 36px;
+                margin: 15px 0;
+                height: 50px;
+            }
+            .scoring-buttons {
+                flex-direction: row;
+            }
+            .scoring-buttons button {
+                margin: 0 5px;
+            }
+            .card {
+                padding: 10px;
+            }
+            .stage-instructions {
+                padding: 10px;
+                font-size: 16px;
             }
         }
         
@@ -768,6 +828,16 @@
                         btn.disabled = true;
                     });
                     document.getElementById(`${stage}-navigation`).classList.remove('hidden');
+                    
+                    // 添加完成提示
+                    const completionMessage = document.createElement('div');
+                    completionMessage.className = 'instruction fade-in';
+                    completionMessage.style.backgroundColor = 'var(--secondary-color)';
+                    completionMessage.style.color = 'white';
+                    completionMessage.textContent = '恭喜！本阶段测试已完成，请点击下方按钮继续。';
+                    
+                    const navigationElement = document.getElementById(`${stage}-navigation`);
+                    navigationElement.parentNode.insertBefore(completionMessage, navigationElement);
                 }
             }
             
@@ -1011,6 +1081,9 @@
                 
                 // 介绍部分
                 buttons.backToInfo.addEventListener('click', function() {
+                    if (!confirmReturn('返回将丢失当前进度，确定要返回吗？')) {
+                        return;
+                    }
                     showSection('participantInfo');
                 });
                 
@@ -1028,6 +1101,10 @@
                 });
                 
                 buttons.backToIntro.addEventListener('click', function() {
+                    if (demoIndex > 0 && !confirmReturn('返回将丢失当前练习进度，确定要返回吗？')) {
+                        return;
+                    }
+                    demoIndex = 0;
                     showSection('introduction');
                 });
                 
@@ -1037,6 +1114,9 @@
                 
                 // 第一阶段指导语部分
                 buttons.backToDemo.addEventListener('click', function() {
+                    if (!confirmReturn('返回将丢失当前进度，确定要返回吗？')) {
+                        return;
+                    }
                     showSection('demo');
                 });
                 
@@ -1051,15 +1131,34 @@
                 
                 // 第一阶段部分
                 buttons.backToStage1Instructions.addEventListener('click', function() {
+                    if (testData.stage1.currentIndex > 0 && !confirmReturn('返回将丢失当前阶段的测试进度，确定要返回吗？')) {
+                        return;
+                    }
+                    // 重置第一阶段数据
+                    testData.stage1.currentIndex = 0;
+                    testData.stage1.totalScore = 0;
+                    testData.stage1.commands.forEach(command => command.score = null);
                     showSection('stage1Instructions');
                 });
                 
                 buttons.startStage2Instructions.addEventListener('click', function() {
+                    // 检查第一阶段是否完成
+                    if (testData.stage1.currentIndex < testData.stage1.commands.length) {
+                        alert('请先完成当前阶段的所有测试项目！');
+                        return;
+                    }
                     showSection('stage2Instructions');
                 });
                 
                 // 第二阶段指导语部分
                 buttons.backToStage1.addEventListener('click', function() {
+                    if (testData.stage2.currentIndex > 0 && !confirmReturn('返回将丢失当前阶段的测试进度，确定要返回吗？')) {
+                        return;
+                    }
+                    // 重置第二阶段数据
+                    testData.stage2.currentIndex = 0;
+                    testData.stage2.totalScore = 0;
+                    testData.stage2.commands.forEach(command => command.score = null);
                     showSection('stage1');
                 });
                 
@@ -1074,15 +1173,34 @@
                 
                 // 第二阶段部分
                 buttons.backToStage2Instructions.addEventListener('click', function() {
+                    if (testData.stage2.currentIndex > 0 && !confirmReturn('返回将丢失当前阶段的测试进度，确定要返回吗？')) {
+                        return;
+                    }
+                    // 重置第二阶段数据
+                    testData.stage2.currentIndex = 0;
+                    testData.stage2.totalScore = 0;
+                    testData.stage2.commands.forEach(command => command.score = null);
                     showSection('stage2Instructions');
                 });
                 
                 buttons.startStage3Instructions.addEventListener('click', function() {
+                    // 检查第二阶段是否完成
+                    if (testData.stage2.currentIndex < testData.stage2.commands.length) {
+                        alert('请先完成当前阶段的所有测试项目！');
+                        return;
+                    }
                     showSection('stage3Instructions');
                 });
                 
                 // 第三阶段指导语部分
                 buttons.backToStage2.addEventListener('click', function() {
+                    if (testData.stage3.currentIndex > 0 && !confirmReturn('返回将丢失当前阶段的测试进度，确定要返回吗？')) {
+                        return;
+                    }
+                    // 重置第三阶段数据
+                    testData.stage3.currentIndex = 0;
+                    testData.stage3.totalScore = 0;
+                    testData.stage3.commands.forEach(command => command.score = null);
                     showSection('stage2');
                 });
                 
@@ -1097,10 +1215,22 @@
                 
                 // 第三阶段部分
                 buttons.backToStage3Instructions.addEventListener('click', function() {
+                    if (testData.stage3.currentIndex > 0 && !confirmReturn('返回将丢失当前阶段的测试进度，确定要返回吗？')) {
+                        return;
+                    }
+                    // 重置第三阶段数据
+                    testData.stage3.currentIndex = 0;
+                    testData.stage3.totalScore = 0;
+                    testData.stage3.commands.forEach(command => command.score = null);
                     showSection('stage3Instructions');
                 });
                 
                 buttons.showResults.addEventListener('click', function() {
+                    // 检查第三阶段是否完成
+                    if (testData.stage3.currentIndex < testData.stage3.commands.length) {
+                        alert('请先完成当前阶段的所有测试项目！');
+                        return;
+                    }
                     showSection('results');
                     displayResults();
                 });
@@ -1136,6 +1266,11 @@
                 document.querySelectorAll('.score-btn').forEach(btn => {
                     btn.disabled = false;
                 });
+            }
+            
+            // 添加确认函数，用于返回按钮
+            function confirmReturn(message) {
+                return confirm(message);
             }
             
             // 初始化
