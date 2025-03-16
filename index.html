@@ -35,7 +35,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
             background-color: white;
             border-radius: 10px;
@@ -267,6 +267,7 @@
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
+                width: 95%;
             }
             .instruction {
                 font-size: 20px;
@@ -275,6 +276,42 @@
             .scoring-buttons button {
                 padding: 10px 15px;
                 font-size: 16px;
+            }
+            .command-display {
+                font-size: 48px;
+                margin: 30px 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 10px;
+                width: 100%;
+            }
+            .form-group {
+                max-width: 100%;
+            }
+            .command-display {
+                font-size: 36px;
+                margin: 20px 0;
+                height: 80px;
+            }
+            .scoring-buttons {
+                flex-direction: column;
+            }
+            .scoring-buttons button {
+                margin: 5px 0;
+                width: 100%;
+            }
+            .navigation {
+                flex-direction: column;
+            }
+            .navigation button {
+                width: 100%;
+                margin: 5px 0;
             }
         }
         
