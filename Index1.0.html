@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>头脚肩膝(HTKS)测量系统</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #5cb85c;
+            --accent-color: #f0ad4e;
+            --danger-color: #d9534f;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333;
+            --medium-gray: #777;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark-gray);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        h1, h2, h3, h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-warning {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-lg {
+            font-size: 18px;
+            padding: 15px 30px;
+        }
+        
+        .btn-sm {
+            font-size: 14px;
+            padding: 6px 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .card {
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .instruction {
+            font-size: 24px;
+            text-align: center;
+            margin: 30px 0;
+            padding: 30px;
+            background-color: var(--light-gray);
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        
+        .scoring-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .scoring-buttons button {
+            margin: 0 15px;
+            padding: 15px 25px;
+            font-size: 18px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--light-gray);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+            height: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .result-summary {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        
+        .score-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .chart-container {
+            margin: 30px 0;
+            height: 400px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: var(--medium-gray);
+            font-size: 14px;
+        }
+        
+        /* 特定阶段样式 */
+        .stage-instructions {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+        
+        .command-display {
+            font-size: 72px;
+            text-align: center;
+            color: var(--primary-color);
+            margin: 50px 0;
+            height: 100px;
+            font-weight: bold;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .instruction {
+                font-size: 20px;
+                padding: 15px;
+            }
+            .scoring-buttons button {
+                padding: 10px 15px;
+                font-size: 16px;
+            }
+        }
+        
+        .required {
+            color: var(--danger-color);
+            margin-left: 2px;
+        }
+        
+        input::placeholder, select::placeholder {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>头脚肩膝(HTKS)测量系统</h1>
+            <p>幼儿抑制控制和认知灵活性测量工具</p>
+        </div>
+
+        <!-- 参与者信息部分 -->
+        <div id="section-participant-info" class="section active">
+            <h2>参与者信息</h2>
+            <div class="card">
+                <form id="participant-form">
+                    <div class="form-group">
+                        <label for="participant-name">姓名 <span class="required">*</span></label>
+                        <input type="text" id="participant-name" placeholder="请输入姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="participant-birth">出生年月 <span class="required">*</span></label>
+                        <input type="date" id="participant-birth" placeholder="yyyy/mm/日" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="participant-gender">性别 <span class="required">*</span></label>
+                        <select id="participant-gender" required>
+                            <option value="">请选择性别</option>
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="participant-kindergarten">幼儿园 <span class="required">*</span></label>
+                        <input type="text" id="participant-kindergarten" placeholder="请输入幼儿园名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="participant-class">班级 <span class="required">*</span></label>
+                        <input type="text" id="participant-class" placeholder="请输入班级" required>
+                    </div>
+                </form>
+                <div class="navigation">
+                    <div></div>
+                    <button id="btn-start-introduction" class="btn btn-primary btn-lg">开始任务</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 任务介绍部分 -->
+        <div id="section-introduction" class="section">
+            <h2>任务简介与指导语</h2>
+            <div class="card">
+                <div class="stage-instructions">
+                    <p><strong>你好小朋友！我们今天要玩一个有趣的游戏。让我来慢慢告诉你怎么玩，好吗？</strong></p>
+                    <p>首先，让我们站起来，保持一个舒服的姿势。这个游戏里，我们要学会摸四个地方：头、肩膀、膝盖和脚。</p>
+                    <p>让我们一起先练习摸这些地方。你看，这是头（指着头），这是肩膀（指着肩膀），这是膝盖（指着膝盖），这是脚（指着脚）。</p>
+                    <p>你也跟着做一遍好吗？</p>
+                </div>
+                <div class="navigation">
+                    <button id="btn-back-to-info" class="btn btn-warning">返回</button>
+                    <button id="btn-start-demo" class="btn btn-primary">继续</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 示范练习部分 -->
+        <div id="section-demo" class="section">
+            <h2>简单练习</h2>
+            <div class="card">
+                <div class="stage-instructions">
+                    <p>太棒了！现在我们来玩第一个小游戏。当我说"摸头"的时候，你就摸头；当我说"摸脚"的时候，你就摸脚。我们先试试看：</p>
+                </div>
+                <div id="demo-container">
+                    <div class="command-display" id="demo-command">准备开始</div>
+                    <div class="scoring-buttons">
+                        <button id="btn-next-demo" class="btn btn-primary">下一个指令</button>
+                    </div>
+                </div>
+                <div class="navigation hidden" id="demo-navigation">
+                    <button id="btn-back-to-intro" class="btn btn-warning">返回</button>
+                    <button id="btn-start-stage1-instructions" class="btn btn-primary">进入正式任务</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第一阶段指导语 -->
+        <div id="section-stage1-instructions" class="section">
+            <h2>第一阶段任务指导语</h2>
+            <div class="card">
+                <div class="stage-instructions">
+                    <p>现在游戏要变得更有趣了！我们要玩"反着做"的游戏。</p>
+                    <p>这次当我说"摸头"时候，你要摸脚；当我说"摸脚"的时候，你要摸头。</p>
+                    <p>听起来很有趣对不对？让我们试试看！</p>
+                </div>
+                <div class="navigation">
+                    <button id="btn-back-to-demo" class="btn btn-warning">返回</button>
+                    <button id="btn-start-stage1" class="btn btn-primary">开始第一阶段</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第一阶段测试 -->
+        <div id="section-stage1" class="section">
+            <h2>第一阶段：头-脚</h2>
+            <div class="card">
+                <div class="progress-container">
+                    <div class="progress-bar" id="stage1-progress"></div>
+                </div>
+                <p><strong>当前指令:</strong></p>
+                <div class="command-display" id="stage1-command">准备开始</div>
+                <div class="scoring-buttons">
+                    <button class="btn btn-danger score-btn" data-score="0">错误 (0分)</button>
+                    <button class="btn btn-warning score-btn" data-score="1">犹豫/自我修正 (1分)</button>
+                    <button class="btn btn-success score-btn" data-score="2">快速正确 (2分)</button>
+                </div>
+                <div class="navigation hidden" id="stage1-navigation">
+                    <button id="btn-back-to-stage1-instructions" class="btn btn-warning">返回</button>
+                    <button id="btn-start-stage2-instructions" class="btn btn-primary">进入第二阶段</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二阶段指导语 -->
+        <div id="section-stage2-instructions" class="section">
+            <h2>第二阶段任务指导语</h2>
+            <div class="card">
+                <div class="stage-instructions">
+                    <p>做得好！现在我们来学习新的规则。</p>
+                    <p>在这一阶段，当我说"摸肩膀"时，你要摸膝盖；当我说"摸膝盖"时，你要摸肩膀。</p>
+                    <p>记住，我们还是要"反着做"哦！我们来试试吧！</p>
+                </div>
+                <div class="navigation">
+                    <button id="btn-back-to-stage1" class="btn btn-warning">返回</button>
+                    <button id="btn-start-stage2" class="btn btn-primary">开始第二阶段</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二阶段测试 -->
+        <div id="section-stage2" class="section">
+            <h2>第二阶段：肩膀-膝盖</h2>
+            <div class="card">
+                <div class="progress-container">
+                    <div class="progress-bar" id="stage2-progress"></div>
+                </div>
+                <p><strong>当前指令:</strong></p>
+                <div class="command-display" id="stage2-command">准备开始</div>
+                <div class="scoring-buttons">
+                    <button class="btn btn-danger score-btn" data-score="0">错误 (0分)</button>
+                    <button class="btn btn-warning score-btn" data-score="1">犹豫/自我修正 (1分)</button>
+                    <button class="btn btn-success score-btn" data-score="2">快速正确 (2分)</button>
+                </div>
+                <div class="navigation hidden" id="stage2-navigation">
+                    <button id="btn-back-to-stage2-instructions" class="btn btn-warning">返回</button>
+                    <button id="btn-start-stage3-instructions" class="btn btn-primary">进入第三阶段</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三阶段指导语 -->
+        <div id="section-stage3-instructions" class="section">
+            <h2>第三阶段任务指导语</h2>
+            <div class="card">
+                <div class="stage-instructions">
+                    <p>太棒了！现在我们来到最后一个阶段。</p>
+                    <p>这次我们要把前面两个规则结合起来：</p>
+                    <ul>
+                        <li>当我说"摸头"时，你要摸脚</li>
+                        <li>当我说"摸脚"时，你要摸头</li>
+                        <li>当我说"摸肩膀"时，你要摸膝盖</li>
+                        <li>当我说"摸膝盖"时，你要摸肩膀</li>
+                    </ul>
+                    <p>这是最难的部分，但我相信你能做到！我们开始吧！</p>
+                </div>
+                <div class="navigation">
+                    <button id="btn-back-to-stage2" class="btn btn-warning">返回</button>
+                    <button id="btn-start-stage3" class="btn btn-primary">开始第三阶段</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三阶段测试 -->
+        <div id="section-stage3" class="section">
+            <h2>第三阶段：混合</h2>
+            <div class="card">
+                <div class="progress-container">
+                    <div class="progress-bar" id="stage3-progress"></div>
+                </div>
+                <p><strong>当前指令:</strong></p>
+                <div class="command-display" id="stage3-command">准备开始</div>
+                <div class="scoring-buttons">
+                    <button class="btn btn-danger score-btn" data-score="0">错误 (0分)</button>
+                    <button class="btn btn-warning score-btn" data-score="1">犹豫/自我修正 (1分)</button>
+                    <button class="btn btn-success score-btn" data-score="2">快速正确 (2分)</button>
+                </div>
+                <div class="navigation hidden" id="stage3-navigation">
+                    <button id="btn-back-to-stage3-instructions" class="btn btn-warning">返回</button>
+                    <button id="btn-show-results" class="btn btn-primary">查看结果</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果显示部分 -->
+        <div id="section-results" class="section">
+            <h2>测试结果</h2>
+            <div class="card">
+                <div id="participant-summary">
+                    <h3>参与者信息</h3>
+                    <p><strong>姓名:</strong> <span id="summary-name"></span></p>
+                    <p><strong>出生年月:</strong> <span id="summary-birth"></span></p>
+                    <p><strong>性别:</strong> <span id="summary-gender"></span></p>
+                    <p><strong>幼儿园:</strong> <span id="summary-kindergarten"></span></p>
+                    <p><strong>班级:</strong> <span id="summary-class"></span></p>
+                </div>
+                
+                <div class="result-summary">
+                    <h3>得分统计</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>阶段</th>
+                                <th>得分</th>
+                                <th>满分</th>
+                                <th>得分率</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>第一阶段 (头-脚)</td>
+                                <td id="stage1-score">-</td>
+                                <td>20</td>
+                                <td id="stage1-percent">-</td>
+                            </tr>
+                            <tr>
+                                <td>第二阶段 (肩膀-膝盖)</td>
+                                <td id="stage2-score">-</td>
+                                <td>20</td>
+                                <td id="stage2-percent">-</td>
+                            </tr>
+                            <tr>
+                                <td>第三阶段 (混合)</td>
+                                <td id="stage3-score">-</td>
+                                <td>20</td>
+                                <td id="stage3-percent">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>总分</strong></td>
+                                <td id="total-score" class="score-display">-</td>
+                                <td>60</td>
+                                <td id="total-percent">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="results-chart"></canvas>
+                </div>
+                
+                <h3>详细得分记录</h3>
+                <div id="detailed-scores">
+                    <!-- 会通过JavaScript填充 -->
+                </div>
+                
+                <div class="navigation">
+                    <button id="btn-export-results" class="btn btn-primary">导出结果(CSV)</button>
+                    <button id="btn-start-new" class="btn btn-success">开始新测试</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>头脚肩膝(HTKS)测量系统 © 2025</p>
+        </div>
+    </div>
+
+    <!-- 引入Chart.js用于绘制图表 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 全局测试数据
+            const testData = {
+                participant: {},
+                stage1: {
+                    commands: [
+                        { command: "摸脚", correctResponse: "摸头", score: null },
+                        { command: "摸脚", correctResponse: "摸头", score: null },
+                        { command: "摸头", correctResponse: "摸脚", score: null },
+                        { command: "摸脚", correctResponse: "摸头", score: null },
+                        { command: "摸头", correctResponse: "摸脚", score: null },
+                        { command: "摸头", correctResponse: "摸脚", score: null },
+                        { command: "摸脚", correctResponse: "摸头", score: null },
+                        { command: "摸头", correctResponse: "摸脚", score: null },
+                        { command: "摸头", correctResponse: "摸脚", score: null },
+                        { command: "摸脚", correctResponse: "摸头", score: null }
+                    ],
+                    currentIndex: 0,
+                    totalScore: 0
+                },
+                stage2: {
+                    commands: [
+                        { command: "摸膝盖", correctResponse: "摸肩膀", score: null },
+                        { command: "摸膝盖", correctResponse: "摸肩膀", score: null },
+                        { command: "摸肩膀", correctResponse: "摸膝盖", score: null },
+                        { command: "摸膝盖", correctResponse: "摸肩膀", score: null },
+                        { command: "摸肩膀", correctResponse: "摸膝盖", score: null },
+                        { command: "摸肩膀", correctResponse: "摸膝盖", score: null },
+                        { command: "摸膝盖", correctResponse: "摸肩膀", score: null },
+                        { command: "摸肩膀", correctResponse: "摸膝盖", score: null },
+                        { command: "摸肩膀", correctResponse: "摸膝盖", score: null },
+                        { command: "摸膝盖", correctResponse: "摸肩膀", score: null }
+                    ],
+                    currentIndex: 0,
+                    totalScore: 0
+                },
+                stage3: {
+                    commands: [
+                        { command: "摸脚", correctResponse: "摸头", score: null },
+                        { command: "摸膝盖", correctResponse: "摸肩膀", score: null },
+                        { command: "摸肩膀", correctResponse: "摸膝盖", score: null },
+                        { command: "摸脚", correctResponse: "摸头", score: null },
+                        { command: "摸膝盖", correctResponse: "摸肩膀", score: null },
+                        { command: "摸头", correctResponse: "摸脚", score: null },
+                        { command: "摸肩膀", correctResponse: "摸膝盖", score: null },
+                        { command: "摸膝盖", correctResponse: "摸肩膀", score: null },
+                        { command: "摸头", correctResponse: "摸脚", score: null },
+                        { command: "摸脚", correctResponse: "摸头", score: null }
+                    ],
+                    currentIndex: 0,
+                    totalScore: 0
+                }
+            };
+            
+            // DOM元素引用
+            const sections = {
+                participantInfo: document.getElementById('section-participant-info'),
+                introduction: document.getElementById('section-introduction'),
+                demo: document.getElementById('section-demo'),
+                stage1Instructions: document.getElementById('section-stage1-instructions'),
+                stage1: document.getElementById('section-stage1'),
+                stage2Instructions: document.getElementById('section-stage2-instructions'),
+                stage2: document.getElementById('section-stage2'),
+                stage3Instructions: document.getElementById('section-stage3-instructions'),
+                stage3: document.getElementById('section-stage3'),
+                results: document.getElementById('section-results')
+            };
+            
+            // 按钮引用
+            const buttons = {
+                startIntroduction: document.getElementById('btn-start-introduction'),
+                backToInfo: document.getElementById('btn-back-to-info'),
+                startDemo: document.getElementById('btn-start-demo'),
+                nextDemo: document.getElementById('btn-next-demo'),
+                backToIntro: document.getElementById('btn-back-to-intro'),
+                startStage1Instructions: document.getElementById('btn-start-stage1-instructions'),
+                backToDemo: document.getElementById('btn-back-to-demo'),
+                startStage1: document.getElementById('btn-start-stage1'),
+                backToStage1Instructions: document.getElementById('btn-back-to-stage1-instructions'),
+                startStage2Instructions: document.getElementById('btn-start-stage2-instructions'),
+                backToStage1: document.getElementById('btn-back-to-stage1'),
+                startStage2: document.getElementById('btn-start-stage2'),
+                backToStage2Instructions: document.getElementById('btn-back-to-stage2-instructions'),
+                startStage3Instructions: document.getElementById('btn-start-stage3-instructions'),
+                backToStage2: document.getElementById('btn-back-to-stage2'),
+                startStage3: document.getElementById('btn-start-stage3'),
+                backToStage3Instructions: document.getElementById('btn-back-to-stage3-instructions'),
+                showResults: document.getElementById('btn-show-results'),
+                exportResults: document.getElementById('btn-export-results'),
+                startNew: document.getElementById('btn-start-new')
+            };
+            
+            // 切换活动部分
+            function showSection(sectionId) {
+                Object.values(sections).forEach(section => {
+                    section.classList.remove('active');
+                });
+                sections[sectionId].classList.add('active');
+                sections[sectionId].classList.add('fade-in');
+                setTimeout(() => sections[sectionId].classList.remove('fade-in'), 500);
+            }
+            
+            // 收集参与者信息
+            function collectParticipantInfo() {
+                const form = document.getElementById('participant-form');
+                
+                // 手动检查每个必填字段
+                const name = document.getElementById('participant-name').value.trim();
+                const birth = document.getElementById('participant-birth').value.trim();
+                const gender = document.getElementById('participant-gender').value;
+                const kindergarten = document.getElementById('participant-kindergarten').value.trim();
+                const classValue = document.getElementById('participant-class').value.trim();
+                
+                if (!name || !birth || !gender || !kindergarten || !classValue) {
+                    alert('请填写所有必填字段！');
+                    return false;
+                }
+                
+                testData.participant = {
+                    name: name,
+                    birth: birth,
+                    gender: gender,
+                    kindergarten: kindergarten,
+                    class: classValue
+                };
+                
+                return true;
+            }
+            
+            // 示范部分逻辑
+            const demoCommands = ["摸头", "摸脚", "摸头"];
+            let demoIndex = 0;
+            
+            function showNextDemoCommand() {
+                const demoCommandDisplay = document.getElementById('demo-command');
+                
+                if (demoIndex < demoCommands.length) {
+                    demoCommandDisplay.textContent = demoCommands[demoIndex];
+                    demoIndex++;
+                } else {
+                    demoCommandDisplay.textContent = "练习完成！";
+                    document.getElementById('btn-next-demo').style.display = 'none';
+                    document.getElementById('demo-navigation').classList.remove('hidden');
+                }
+            }
+            
+            // 测试阶段通用逻辑
+            function updateStageProgress(stage, index) {
+                const progressBar = document.getElementById(`${stage}-progress`);
+                const progress = (index / 10) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+            
+            function showCommand(stage) {
+                const stageData = testData[stage];
+                const commandDisplay = document.getElementById(`${stage}-command`);
+                
+                if (stageData.currentIndex < stageData.commands.length) {
+                    const currentCommand = stageData.commands[stageData.currentIndex].command;
+                    commandDisplay.textContent = currentCommand;
+                    updateStageProgress(stage, stageData.currentIndex);
+                } else {
+                    commandDisplay.textContent = "阶段完成！";
+                    document.querySelectorAll('.score-btn').forEach(btn => {
+                        btn.disabled = true;
+                    });
+                    document.getElementById(`${stage}-navigation`).classList.remove('hidden');
+                }
+            }
+            
+            function recordScore(stage, score) {
+                console.log(`记录得分: 阶段=${stage}, 分数=${score}, 当前索引=${testData[stage].currentIndex}`);
+                const stageData = testData[stage];
+                if (stageData.currentIndex < stageData.commands.length) {
+                    stageData.commands[stageData.currentIndex].score = score;
+                    stageData.totalScore += score;
+                    stageData.currentIndex++;
+                    showCommand(stage);
+                }
+            }
+            
+            // 结果显示逻辑
+            function displayResults() {
+                // 填充参与者信息
+                document.getElementById('summary-name').textContent = testData.participant.name;
+                document.getElementById('summary-birth').textContent = testData.participant.birth;
+                document.getElementById('summary-gender').textContent = testData.participant.gender === 'male' ? '男' : '女';
+                document.getElementById('summary-kindergarten').textContent = testData.participant.kindergarten;
+                document.getElementById('summary-class').textContent = testData.participant.class;
+                
+                // 计算和显示得分
+                const stage1Score = testData.stage1.totalScore;
+                const stage2Score = testData.stage2.totalScore;
+                const stage3Score = testData.stage3.totalScore;
+                const totalScore = stage1Score + stage2Score + stage3Score;
+                
+                document.getElementById('stage1-score').textContent = stage1Score;
+                document.getElementById('stage2-score').textContent = stage2Score;
+                document.getElementById('stage3-score').textContent = stage3Score;
+                document.getElementById('total-score').textContent = totalScore;
+                
+                document.getElementById('stage1-percent').textContent = `${(stage1Score / 20 * 100).toFixed(1)}%`;
+                document.getElementById('stage2-percent').textContent = `${(stage2Score / 20 * 100).toFixed(1)}%`;
+                document.getElementById('stage3-percent').textContent = `${(stage3Score / 20 * 100).toFixed(1)}%`;
+                document.getElementById('total-percent').textContent = `${(totalScore / 60 * 100).toFixed(1)}%`;
+                
+                // 生成详细得分表格
+                generateDetailedScoresTable();
+                
+                // 绘制图表
+                createResultsChart();
+                
+                // 自动下载结果
+                setTimeout(exportResultsCSV, 500);
+            }
+            
+            function generateDetailedScoresTable() {
+                const detailedScores = document.getElementById('detailed-scores');
+                detailedScores.innerHTML = '';
+                
+                // 创建三个阶段的表格
+                const stages = [
+                    { name: '第一阶段 (头-脚)', data: testData.stage1 },
+                    { name: '第二阶段 (肩膀-膝盖)', data: testData.stage2 },
+                    { name: '第三阶段 (混合)', data: testData.stage3 }
+                ];
+                
+                stages.forEach(stage => {
+                    const table = document.createElement('table');
+                    table.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>指令</th>
+                                <th>实际动作</th>
+                                <th>得分</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${stage.data.commands.map((item, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${item.command}</td>
+                                    <td>${item.correctResponse}</td>
+                                    <td>${item.score !== null ? item.score : '-'}</td>
+                                </tr>
+                            `).join('')}
+                            <tr>
+                                <td colspan="3"><strong>小计</strong></td>
+                                <td><strong>${stage.data.totalScore}</strong></td>
+                            </tr>
+                        </tbody>
+                    `;
+                    
+                    const heading = document.createElement('h4');
+                    heading.textContent = stage.name;
+                    
+                    detailedScores.appendChild(heading);
+                    detailedScores.appendChild(table);
+                });
+            }
+            
+            function createResultsChart() {
+                const ctx = document.getElementById('results-chart').getContext('2d');
+                
+                // 销毁之前的图表如果存在
+                if (window.resultsChart) {
+                    window.resultsChart.destroy();
+                }
+                
+                // 创建新图表
+                window.resultsChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['第一阶段 (头-脚)', '第二阶段 (肩膀-膝盖)', '第三阶段 (混合)', '总分'],
+                        datasets: [{
+                            label: '得分',
+                            data: [
+                                testData.stage1.totalScore,
+                                testData.stage2.totalScore,
+                                testData.stage3.totalScore,
+                                testData.stage1.totalScore + testData.stage2.totalScore + testData.stage3.totalScore
+                            ],
+                            backgroundColor: [
+                                'rgba(74, 111, 165, 0.7)',
+                                'rgba(74, 111, 165, 0.7)',
+                                'rgba(74, 111, 165, 0.7)',
+                                'rgba(92, 184, 92, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(74, 111, 165, 1)',
+                                'rgba(74, 111, 165, 1)',
+                                'rgba(74, 111, 165, 1)',
+                                'rgba(92, 184, 92, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 60,
+                                title: {
+                                    display: true,
+                                    text: '得分'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 导出结果为CSV
+            function exportResultsCSV() {
+                // 创建CSV内容
+                let csvContent = "data:text/csv;charset=utf-8,";
+                
+                // 添加头部
+                csvContent += "测试ID,姓名,出生年月,性别,幼儿园,班级,";
+                csvContent += "阶段1得分,阶段2得分,阶段3得分,总分\n";
+                
+                // 添加数据行
+                const gender = testData.participant.gender === 'male' ? '男' : '女';
+                
+                csvContent += `${new Date().getTime()},`;
+                csvContent += `${testData.participant.name},`;
+                csvContent += `${testData.participant.birth},`;
+                csvContent += `${gender},`;
+                csvContent += `${testData.participant.kindergarten},`;
+                csvContent += `${testData.participant.class},`;
+                csvContent += `${testData.stage1.totalScore},`;
+                csvContent += `${testData.stage2.totalScore},`;
+                csvContent += `${testData.stage3.totalScore},`;
+                csvContent += `${testData.stage1.totalScore + testData.stage2.totalScore + testData.stage3.totalScore}\n`;
+                
+                // 添加详细记录
+                csvContent += "\n阶段1详细得分\n";
+                csvContent += "序号,指令,实际动作,得分\n";
+                testData.stage1.commands.forEach((item, index) => {
+                    csvContent += `${index + 1},${item.command},${item.correctResponse},${item.score}\n`;
+                });
+                
+                csvContent += "\n阶段2详细得分\n";
+                csvContent += "序号,指令,实际动作,得分\n";
+                testData.stage2.commands.forEach((item, index) => {
+                    csvContent += `${index + 1},${item.command},${item.correctResponse},${item.score}\n`;
+                });
+                
+                csvContent += "\n阶段3详细得分\n";
+                csvContent += "序号,指令,实际动作,得分\n";
+                testData.stage3.commands.forEach((item, index) => {
+                    csvContent += `${index + 1},${item.command},${item.correctResponse},${item.score}\n`;
+                });
+                
+                // 创建下载链接
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `HTKS_${testData.participant.name}_${new Date().toISOString().slice(0, 10)}.csv`);
+                document.body.appendChild(link);
+                
+                // 点击链接下载
+                link.click();
+                document.body.removeChild(link);
+            }
+            
+            // 重置并开始新测试
+            function resetTest() {
+                // 重置表单
+                document.getElementById('participant-form').reset();
+                
+                // 重置测试数据
+                testData.stage1.commands.forEach(command => command.score = null);
+                testData.stage1.currentIndex = 0;
+                testData.stage1.totalScore = 0;
+                
+                testData.stage2.commands.forEach(command => command.score = null);
+                testData.stage2.currentIndex = 0;
+                testData.stage2.totalScore = 0;
+                
+                testData.stage3.commands.forEach(command => command.score = null);
+                testData.stage3.currentIndex = 0;
+                testData.stage3.totalScore = 0;
+                
+                // 重置示范索引
+                demoIndex = 0;
+                
+                // 重置按钮状态
+                document.getElementById('btn-next-demo').style.display = 'block';
+                document.querySelectorAll('.score-btn').forEach(btn => {
+                    btn.disabled = false;
+                });
+                
+                // 返回到首页
+                showSection('participantInfo');
+            }
+            
+            // 设置事件监听器
+            function setupEventListeners() {
+                // 参与者信息部分
+                buttons.startIntroduction.addEventListener('click', function() {
+                    if (collectParticipantInfo()) {
+                        showSection('introduction');
+                    }
+                });
+                
+                // 介绍部分
+                buttons.backToInfo.addEventListener('click', function() {
+                    showSection('participantInfo');
+                });
+                
+                buttons.startDemo.addEventListener('click', function() {
+                    showSection('demo');
+                    demoIndex = 0;
+                    document.getElementById('demo-command').textContent = '准备开始';
+                    document.getElementById('btn-next-demo').style.display = 'block';
+                    document.getElementById('demo-navigation').classList.add('hidden');
+                });
+                
+                // 示范部分
+                buttons.nextDemo.addEventListener('click', function() {
+                    showNextDemoCommand();
+                });
+                
+                buttons.backToIntro.addEventListener('click', function() {
+                    showSection('introduction');
+                });
+                
+                buttons.startStage1Instructions.addEventListener('click', function() {
+                    showSection('stage1Instructions');
+                });
+                
+                // 第一阶段指导语部分
+                buttons.backToDemo.addEventListener('click', function() {
+                    showSection('demo');
+                });
+                
+                buttons.startStage1.addEventListener('click', function() {
+                    showSection('stage1');
+                    testData.stage1.currentIndex = 0;
+                    testData.stage1.totalScore = 0;
+                    document.getElementById('stage1-navigation').classList.add('hidden');
+                    enableScoringButtons();
+                    showCommand('stage1');
+                });
+                
+                // 第一阶段部分
+                buttons.backToStage1Instructions.addEventListener('click', function() {
+                    showSection('stage1Instructions');
+                });
+                
+                buttons.startStage2Instructions.addEventListener('click', function() {
+                    showSection('stage2Instructions');
+                });
+                
+                // 第二阶段指导语部分
+                buttons.backToStage1.addEventListener('click', function() {
+                    showSection('stage1');
+                });
+                
+                buttons.startStage2.addEventListener('click', function() {
+                    showSection('stage2');
+                    testData.stage2.currentIndex = 0;
+                    testData.stage2.totalScore = 0;
+                    document.getElementById('stage2-navigation').classList.add('hidden');
+                    enableScoringButtons();
+                    showCommand('stage2');
+                });
+                
+                // 第二阶段部分
+                buttons.backToStage2Instructions.addEventListener('click', function() {
+                    showSection('stage2Instructions');
+                });
+                
+                buttons.startStage3Instructions.addEventListener('click', function() {
+                    showSection('stage3Instructions');
+                });
+                
+                // 第三阶段指导语部分
+                buttons.backToStage2.addEventListener('click', function() {
+                    showSection('stage2');
+                });
+                
+                buttons.startStage3.addEventListener('click', function() {
+                    showSection('stage3');
+                    testData.stage3.currentIndex = 0;
+                    testData.stage3.totalScore = 0;
+                    document.getElementById('stage3-navigation').classList.add('hidden');
+                    enableScoringButtons();
+                    showCommand('stage3');
+                });
+                
+                // 第三阶段部分
+                buttons.backToStage3Instructions.addEventListener('click', function() {
+                    showSection('stage3Instructions');
+                });
+                
+                buttons.showResults.addEventListener('click', function() {
+                    showSection('results');
+                    displayResults();
+                });
+                
+                // 结果部分
+                buttons.exportResults.addEventListener('click', function() {
+                    exportResultsCSV();
+                });
+                
+                buttons.startNew.addEventListener('click', function() {
+                    resetTest();
+                });
+                
+                // 为所有得分按钮添加事件监听器
+                document.querySelectorAll('.score-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const score = parseInt(this.dataset.score);
+                        
+                        // 根据当前活动的部分决定记录得分到哪个阶段
+                        if (sections.stage1.classList.contains('active')) {
+                            recordScore('stage1', score);
+                        } else if (sections.stage2.classList.contains('active')) {
+                            recordScore('stage2', score);
+                        } else if (sections.stage3.classList.contains('active')) {
+                            recordScore('stage3', score);
+                        }
+                    });
+                });
+            }
+            
+            // 确保在DOM加载完成后重新绑定所有评分按钮
+            function enableScoringButtons() {
+                document.querySelectorAll('.score-btn').forEach(btn => {
+                    btn.disabled = false;
+                });
+            }
+            
+            // 初始化
+            setupEventListeners();
+        });
+    </script>
+</body>
+</html>
