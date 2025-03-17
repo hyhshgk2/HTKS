@@ -383,6 +383,36 @@
         input::placeholder, select::placeholder {
             color: #aaa;
         }
+        
+        /* 音频按钮样式 */
+        .audio-buttons {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .audio-button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .audio-btn {
+            min-width: 100px;
+        }
+        
+        @media (max-width: 480px) {
+            .audio-button-container {
+                flex-direction: column;
+            }
+            
+            .audio-btn {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -453,6 +483,18 @@
                 <div class="stage-instructions">
                     <p>太棒了！现在我们来玩第一个小游戏。当我说"摸头"的时候，你就摸头；当我说"摸脚"的时候，你就摸脚。我们先试试看：</p>
                 </div>
+                
+                <!-- 添加音频按钮区域 -->
+                <div class="audio-buttons">
+                    <h3>点击下面的按钮可以听到指令声音：</h3>
+                    <div class="audio-button-container">
+                        <button class="btn btn-sm btn-primary audio-btn" data-command="摸头">听"摸头"</button>
+                        <button class="btn btn-sm btn-primary audio-btn" data-command="摸肩膀">听"摸肩膀"</button>
+                        <button class="btn btn-sm btn-primary audio-btn" data-command="摸膝盖">听"摸膝盖"</button>
+                        <button class="btn btn-sm btn-primary audio-btn" data-command="摸脚">听"摸脚"</button>
+                    </div>
+                </div>
+                
                 <div id="demo-container">
                     <div class="command-display" id="demo-command">准备开始</div>
                     <div class="scoring-buttons">
@@ -715,6 +757,30 @@
                 }
             };
             
+            // 添加音频对象
+            const audioFiles = {
+                "摸头": new Audio("sound/摸头.mp3"),
+                "摸肩膀": new Audio("sound/摸肩.mp3"),
+                "摸膝盖": new Audio("sound/摸膝盖.mp3"),
+                "摸脚": new Audio("sound/摸脚.mp3")
+            };
+            
+            // 播放音频的函数
+            function playAudio(command, delay = 0) {
+                if (audioFiles[command]) {
+                    // 停止所有正在播放的音频
+                    Object.values(audioFiles).forEach(audio => {
+                        audio.pause();
+                        audio.currentTime = 0;
+                    });
+                    
+                    // 延迟播放指定的音频
+                    setTimeout(() => {
+                        audioFiles[command].play();
+                    }, delay);
+                }
+            }
+            
             // DOM元素引用
             const sections = {
                 participantInfo: document.getElementById('section-participant-info'),
@@ -798,7 +864,11 @@
                 const demoCommandDisplay = document.getElementById('demo-command');
                 
                 if (demoIndex < demoCommands.length) {
-                    demoCommandDisplay.textContent = demoCommands[demoIndex];
+                    const command = demoCommands[demoIndex];
+                    demoCommandDisplay.textContent = command;
+                    // 播放对应的音频，第一次延迟1秒，后续延迟0.5秒
+                    const delay = demoIndex === 0 ? 1000 : 500;
+                    playAudio(command, delay);
                     demoIndex++;
                 } else {
                     demoCommandDisplay.textContent = "练习完成！";
@@ -821,6 +891,9 @@
                 if (stageData.currentIndex < stageData.commands.length) {
                     const currentCommand = stageData.commands[stageData.currentIndex].command;
                     commandDisplay.textContent = currentCommand;
+                    // 播放对应的音频，第一次延迟1.5秒，后续延迟0.5秒
+                    const delay = stageData.currentIndex === 0 ? 1500 : 500;
+                    playAudio(currentCommand, delay);
                     updateStageProgress(stage, stageData.currentIndex);
                 } else {
                     commandDisplay.textContent = "阶段完成！";
@@ -1259,6 +1332,14 @@
                         }
                     });
                 });
+                
+                // 为音频按钮添加事件监听器
+                document.querySelectorAll('.audio-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const command = this.dataset.command;
+                        playAudio(command);
+                    });
+                });
             }
             
             // 确保在DOM加载完成后重新绑定所有评分按钮
@@ -1274,7 +1355,43 @@
             }
             
             // 初始化
-            setupEventListeners();
+            function init() {
+                // 预加载音频文件
+                let loadedCount = 0;
+                const totalAudios = Object.keys(audioFiles).length;
+                
+                // 监听音频加载完成事件
+                Object.values(audioFiles).forEach(audio => {
+                    audio.addEventListener('canplaythrough', function() {
+                        loadedCount++;
+                        if (loadedCount === totalAudios) {
+                            console.log('所有音频文件加载完成');
+                            // 设置事件监听器
+                            setupEventListeners();
+                        }
+                    });
+                    
+                    // 处理加载错误
+                    audio.addEventListener('error', function() {
+                        console.error('音频文件加载失败:', this.src);
+                        loadedCount++;
+                        if (loadedCount === totalAudios) {
+                            alert('部分音频文件加载失败，测试可能无法正常进行。请检查音频文件是否存在。');
+                            setupEventListeners();
+                        }
+                    });
+                });
+                
+                // 如果5秒后仍未加载完成，也继续执行
+                setTimeout(function() {
+                    if (loadedCount < totalAudios) {
+                        console.warn('音频加载超时，继续执行');
+                        setupEventListeners();
+                    }
+                }, 5000);
+            }
+            
+            init();
         });
     </script>
 </body>
